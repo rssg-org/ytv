@@ -1,6 +1,6 @@
 <template>
   <section>
-    <h2>{{ title }}</h2>
+    <h2 style="margin-inline-start: 7px;">{{ title }}</h2>
     <ul class="video-list">
       <li v-for="video in videos" :key="video.id" class="video-item">
         <!-- 動画 -->
@@ -141,7 +141,7 @@ body {
 
 .video-list {
   list-style: none;
-  padding: 5px;
+  padding: 10px;
   margin: 0;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -155,6 +155,7 @@ body {
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   max-width: 450px;
+  border: 1px solid var(--border-color);
 }
 
 .video-item:hover {
@@ -186,10 +187,11 @@ body {
   background-color: rgba(0, 0, 0, 0.75);
   color: white;
   font-size: 0.8rem;
-  padding: 4px 8px;
+  padding: 3px 6px;
   border-radius: 3px;
   font-weight: bold;
   pointer-events: none;
+  line-height: 1.4;
 }
 
 .channel-thumbnail-wrapper {

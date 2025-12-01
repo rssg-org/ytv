@@ -217,7 +217,7 @@ async function copyUrl(url) {
 }
 .download-main-btn {
   padding: 8px 16px;
-  background: var(--border-color);
+  background: var(--download-button);
   color: var(--text-primary);
   border: none;
   border-radius: 4px;

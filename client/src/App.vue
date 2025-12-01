@@ -5,6 +5,7 @@
 
 <script>
 import HeaderSearch from '@/components/HeaderSearch.vue';
+import { loadDisplayMode, computeIsDarkFromMode } from '@/utils/settingsManager';
 
 export default {
   name: 'App',
@@ -22,14 +23,19 @@ export default {
       } else {
         document.documentElement.classList.remove('dark-mode');
       }
+      // keep legacy key for compatibility
       localStorage.setItem('darkMode', isDarkMode);
     }
   },
   mounted() {
-    // ページ読み込み時にダークモード状態を復元
-    const isDarkMode = localStorage.getItem('darkMode') === 'true';
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark-mode');
+    // ページ読み込み時に表示モードを読み込んでダークモードを適用
+    try {
+      const mode = loadDisplayMode();
+      const isDarkMode = computeIsDarkFromMode(mode);
+      if (isDarkMode) document.documentElement.classList.add('dark-mode');
+    } catch (e) {
+      const isDarkMode = localStorage.getItem('darkMode') === 'true';
+      if (isDarkMode) document.documentElement.classList.add('dark-mode');
     }
   }
 };

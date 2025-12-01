@@ -7,6 +7,7 @@ const STORAGE_KEYS = {
   SHORT_VIDEO_FILTER_ENABLED: 'shortVideoFilterEnabled',
   SHORT_VIDEO_FILTER_MINUTES: 'shortVideoFilterMinutes',
   DARK_MODE: 'darkMode',
+  DISPLAY_MODE: 'displayMode',
 };
 
 const DEFAULTS = {
@@ -139,27 +140,58 @@ export function loadShortVideoFilter() {
 }
 
 /**
- * ダークモード設定を保存
- * @param {boolean} isDark
+ * 表示モードを保存（'device'|'light'|'dark'）
+ * @param {string} mode
  */
-export function saveDarkMode(isDark) {
+export function saveDisplayMode(mode) {
   try {
-    safeSetItem(STORAGE_KEYS.DARK_MODE, !!isDark);
+    const m = String(mode || 'device');
+    safeSetItem(STORAGE_KEYS.DISPLAY_MODE, m);
   } catch (e) {
-    console.error('saveDarkMode error', e);
+    console.error('saveDisplayMode error', e);
   }
 }
 
 /**
- * ダークモード設定を読み込み
+ * 表示モードを読み込み。戻り値は 'device'|'light'|'dark' のいずれか。
+ * 既存の boolean ベースのストレージ ('darkMode') がある場合は互換性のために変換して返す。
+ * デフォルトは 'device'（デバイスに合わせる）。
+ */
+export function loadDisplayMode() {
+  try {
+    const stored = safeGetItem(STORAGE_KEYS.DISPLAY_MODE, null);
+    if (stored !== null && stored !== undefined && stored !== '') return String(stored);
+
+    // 互換: 古い boolean ベースのキーをチェック
+    const legacy = safeGetItem(STORAGE_KEYS.DARK_MODE, null);
+    if (legacy !== null && legacy !== undefined) {
+      return legacy ? 'dark' : 'light';
+    }
+
+    return 'device';
+  } catch (e) {
+    console.error('loadDisplayMode error', e);
+    return 'device';
+  }
+}
+
+/**
+ * displayMode から実際にダークモードかどうかを判定する補助関数
+ * @param {string} mode
  * @returns {boolean}
  */
-export function loadDarkMode() {
+export function computeIsDarkFromMode(mode) {
   try {
-    const stored = safeGetItem(STORAGE_KEYS.DARK_MODE, null);
-    return stored !== null ? Boolean(stored) : false;
+    const m = String(mode || 'device');
+    if (m === 'device') {
+      if (typeof window !== 'undefined' && window.matchMedia) {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+      }
+      return false;
+    }
+    return m === 'dark';
   } catch (e) {
-    console.error('loadDarkMode error', e);
+    console.error('computeIsDarkFromMode error', e);
     return false;
   }
 }
@@ -183,7 +215,8 @@ export default {
   loadDefaultPlayback,
   saveShortVideoFilter,
   loadShortVideoFilter,
-  saveDarkMode,
-  loadDarkMode,
+  saveDisplayMode,
+  loadDisplayMode,
+  computeIsDarkFromMode,
   isValidUrl,
 };

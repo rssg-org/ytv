@@ -43,17 +43,12 @@
       </div>
     </div>
 
-    <!-- ダークモード設定 -->
+    <!-- 表示設定（デバイスに合わせる / ライト / ダーク） -->
     <div class="dark-mode-setting">
       <h4>表示設定</h4>
-      <label>
-        <input
-          type="checkbox"
-          :checked="isDarkMode"
-          @change="$emit('toggle-dark-mode', $event.target.checked)"
-        />
-        ダークモード
-      </label>
+      <label><input type="radio" :checked="displayMode === 'device'" @change="$emit('update:displayMode', 'device')" /> デバイスに合わせる</label>
+      <label><input type="radio" :checked="displayMode === 'light'" @change="$emit('update:displayMode', 'light')" /> ライトモード</label>
+      <label><input type="radio" :checked="displayMode === 'dark'" @change="$emit('update:displayMode', 'dark')" /> ダークモード</label>
     </div>
 
     <!-- カスタムエンドポイント -->
@@ -95,7 +90,7 @@ defineProps({
   defaultPlaybackMode: String,
   shortVideoFilterEnabled: Boolean,
   shortVideoFilterMinutes: Number,
-  isDarkMode: Boolean,
+  displayMode: String,
   customEndpoints: Array,
   newEndpoint: String,
 });
@@ -106,7 +101,7 @@ defineEmits([
   'update:shortVideoFilterEnabled',
   'update:shortVideoFilterMinutes',
   'update:newEndpoint',
-  'toggle-dark-mode',
+  'update:displayMode',
   'add-endpoint',
   'remove-endpoint',
   'close',

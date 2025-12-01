@@ -79,7 +79,7 @@
         :default-playback-mode="defaultPlaybackMode"
         :short-video-filter-enabled="shortVideoFilterEnabled"
         :short-video-filter-minutes="shortVideoFilterMinutes"
-        :is-dark-mode="isDarkMode"
+        :display-mode="displayMode"
         :custom-endpoints="customEndpoints"
         :new-endpoint="newEndpoint"
         @update:mode="mode = $event"
@@ -87,7 +87,7 @@
         @update:short-video-filter-enabled="shortVideoFilterEnabled = $event"
         @update:short-video-filter-minutes="shortVideoFilterMinutes = $event"
         @update:new-endpoint="newEndpoint = $event"
-        @toggle-dark-mode="onToggleDarkMode"
+        @update:displayMode="onUpdateDisplayMode"
         @add-endpoint="addEndpoint"
         @remove-endpoint="removeEndpoint"
         @close="settingsOpen = false"
@@ -119,8 +119,9 @@ import {
   saveDefaultPlayback,
   loadShortVideoFilter,
   saveShortVideoFilter,
-  loadDarkMode,
-  saveDarkMode,
+  loadDisplayMode,
+  saveDisplayMode,
+  computeIsDarkFromMode,
   isValidUrl,
 } from "@/utils/settingsManager";
 
@@ -142,7 +143,10 @@ const mode = ref("existing");
 const defaultPlaybackMode = ref("1");
 const shortVideoFilterEnabled = ref(false);
 const shortVideoFilterMinutes = ref(4);
+const displayMode = ref('device');
 const isDarkMode = ref(false);
+let mq = null;
+let mqHandler = null;
 
 /**
  * 検索フォーム外クリックで候補を閉じる
@@ -182,12 +186,25 @@ onMounted(() => {
   shortVideoFilterEnabled.value = filter.enabled;
   shortVideoFilterMinutes.value = filter.minutes;
 
-  // Load dark mode
-  isDarkMode.value = loadDarkMode();
+  // Load display mode (device/light/dark)
+  try {
+    displayMode.value = loadDisplayMode();
+    isDarkMode.value = computeIsDarkFromMode(displayMode.value);
+  } catch (e) {
+    displayMode.value = 'device';
+    isDarkMode.value = computeIsDarkFromMode(displayMode.value);
+  }
 });
 
 onBeforeUnmount(() => {
   document.removeEventListener("click", onClickOutside);
+  // detach system color scheme listener if attached
+  try {
+    if (mq && mqHandler) {
+      if (mq.removeEventListener) mq.removeEventListener('change', mqHandler);
+      else if (mq.removeListener) mq.removeListener(mqHandler);
+    }
+  } catch (e) {}
 });
 
 /**
@@ -294,12 +311,36 @@ const removeEndpoint = (index) => {
 };
 
 /**
- * ダークモード切り替え
+ * displayMode 更新ハンドラ（SettingsModal から来る）
  */
-const onToggleDarkMode = (value) => {
-  isDarkMode.value = value;
-  saveDarkMode(value);
-  emit('toggle-dark-mode', value);
+const onUpdateDisplayMode = (value) => {
+  displayMode.value = value || 'device';
+  try {
+    saveDisplayMode(displayMode.value);
+  } catch (e) {}
+  isDarkMode.value = computeIsDarkFromMode(displayMode.value);
+  emit('toggle-dark-mode', isDarkMode.value);
+  // Manage system preference listener when using 'device' mode
+  try {
+    // detach existing
+    if (mq && mqHandler) {
+      if (mq.removeEventListener) mq.removeEventListener('change', mqHandler);
+      else if (mq.removeListener) mq.removeListener(mqHandler);
+      mq = null;
+      mqHandler = null;
+    }
+
+    if (displayMode.value === 'device' && typeof window !== 'undefined' && window.matchMedia) {
+      mq = window.matchMedia('(prefers-color-scheme: dark)');
+      mqHandler = (e) => {
+        const isDark = !!e.matches;
+        isDarkMode.value = isDark;
+        emit('toggle-dark-mode', isDark);
+      };
+      if (mq.addEventListener) mq.addEventListener('change', mqHandler);
+      else if (mq.addListener) mq.addListener(mqHandler);
+    }
+  } catch (e) {}
 };
 
 /**
@@ -403,7 +444,7 @@ watch(isDarkMode, (newValue) => {
   padding: 5px 12px 7px 12px; 
   line-height: 28px;
   border-radius: 20px 0 0 20px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--search-border);
   outline: none;
   font-size: 0.9rem;
   box-sizing: border-box;
@@ -420,7 +461,7 @@ watch(isDarkMode, (newValue) => {
 
 .search-button {
   border-radius: 0 20px 20px 0;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--search-border);
   border-left: none;
   background-color: var(--bg-secondary);
   cursor: pointer;

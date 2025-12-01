@@ -30,6 +30,10 @@
     <link rel="icon" href="/favicon.ico" />
 
     <style>
+      a {
+        color: var(--link-color);
+      }
+
       body {
         font-family: "ヒラギノ角ゴ ProN", "Hiragino Kaku Gothic ProN",
                      "メイリオ", Meiryo,
@@ -55,8 +59,8 @@
         }
       }
     </script>
-    <script type="module" crossorigin src="https://cdn.jsdelivr.net/gh/ajgpw/youtube@main/client/dist/assets/index-nszvNFOY.js"></script>
-    <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/ajgpw/youtube@main/client/dist/assets/index-DBrgBlRn.css">
+    <script type="module" crossorigin src="https://cdn.jsdelivr.net/gh/ajgpw/youtube@main/client/dist/assets/index-BJBsbSpr.js"></script>
+    <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/ajgpw/youtube@main/client/dist/assets/index-DyE4RkrI.css">
   </head>
 
   <body>

@@ -23,7 +23,7 @@
       />
     </main>
     <footer class="footer">
-      <p>しあtube</p>
+      <p style="margin-block-start: 1px;">しあtube</p>
       <p>
         <a href="https://github.com/siawaseoktest/youtube" target="_blank" rel="noopener noreferrer">GitHub</a> |
         <a href="https://www.google.com/url?q=https%3A%2F%2Fline.me%2Fti%2Fg2%2FvCj1dWEoRZTALbC0n1w53si3-KJ8OTXnfjV6aw%3Futm_source%3Dinvitation%26utm_medium%3Dlink_copy%26utm_campaign%3Ddefault&sa=D&sntz=1&usg=AOvVaw0AaRwnxB0yifPSGZ1TbcS5" target="_blank" rel="noopener noreferrer">LINE</a>
@@ -32,7 +32,7 @@
         表示回数
         <img src="https://count.getloli.com/@:siatube?name=%3Asiatube&theme=minecraft&padding=7&offset=0&align=top&scale=1&pixelated=1&darkmode=auto" style="width: 50%; max-width: 380px;">
       </div>
-      <div style="color: var(--text-secondary);">バージョン1.4.3</div>
+      <div style="color: var(--text-secondary);">バージョン1.4.4</div>
     </footer>
   </div>
 </template>
