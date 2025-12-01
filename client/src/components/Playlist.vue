@@ -153,18 +153,22 @@ function onImageError(event, id) {
 
 <style scoped>
 .playlist-item.active {
-  background-color: #DDEBE7F2;
+  background-color: var(--hover-bg);
+  transition: background-color 0.2s ease;
 }
 
 .playlist-section {
   max-width: 100%;
   margin: 0 auto;
   padding: 0.9rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .type-watch {
   background-color: transparent;
-  border: 1px solid #ccc; 
+  border: 1px solid var(--border-color); 
   border-radius: 8px;
   padding: 0.9rem;
   max-width: 360px;
@@ -174,11 +178,12 @@ function onImageError(event, id) {
   font-size: 1.4rem;
   margin-bottom: 0.2rem;
   margin-block-start:0.3em;
+  color: var(--text-primary);
 }
 
 .playlist-meta {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 1rem;
 }
 
@@ -221,7 +226,8 @@ function onImageError(event, id) {
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: 0.5rem;
-  margin-block: 10px; 
+  margin-block: 10px;
+  background-color: var(--bg-secondary);
 }
 
 .thumbnail-wrapper.small-thumb {
@@ -241,7 +247,7 @@ function onImageError(event, id) {
   bottom: 4px;
   right: 4px;
   font-size: 0.75rem;
-  color: #fff;
+  color: var(--on-accent);
   background-color: rgba(0, 0, 0, 0.7);
   padding: 2px 5px;
   border-radius: 4px;
@@ -261,11 +267,12 @@ function onImageError(event, id) {
   text-overflow: ellipsis;
   white-space: normal;
   margin-left: 2px;
+  color: var(--text-primary);
 }
 
 .author {
   font-size: 0.8rem;
-  color: #666;
+  color: var(--text-secondary);
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
@@ -294,7 +301,7 @@ function onImageError(event, id) {
 }
 
 .error-message {
-  color: red;
+  color: var(--accent-weak);
   padding: 1rem;
   text-align: center;
 }

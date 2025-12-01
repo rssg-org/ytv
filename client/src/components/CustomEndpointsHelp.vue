@@ -131,7 +131,7 @@ onBeforeUnmount(() => {
 .help-trigger {
   background: transparent;
   border: none;
-  color: #007bff;
+  color: var(--accent-color);
   text-decoration: underline;
   cursor: pointer;
   padding: 0;
@@ -151,7 +151,7 @@ onBeforeUnmount(() => {
 }
 
 .panel {
-  background: #fff;
+  background: var(--bg-primary);
   width: min(900px, calc(100% - 40px));
   max-height: calc(100vh - 40px);
   overflow-y: auto;
@@ -165,8 +165,8 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  border-bottom: 1px solid #eee;
-  background: linear-gradient(180deg,#fff,#fafafa);
+  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(180deg,var(--bg-primary),var(--bg-secondary));
   position: sticky;
   top: 0;
   z-index: 1;
@@ -187,7 +187,7 @@ onBeforeUnmount(() => {
 .panel-body {
   padding: 12px 16px 18px 16px;
   font-size: 0.95rem;
-  color: #222;
+  color: var(--text-primary);
 }
 
 .panel-body ol {
@@ -196,19 +196,19 @@ onBeforeUnmount(() => {
 }
 
 .panel-body a {
-  color: #007bff;
+  color: var(--accent-color);
   text-decoration: underline;
 }
 
 .example {
   margin-top: 8px;
-  color: #444;
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
 
 .note {
   margin-top: 10px;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.85rem;
 }
 

@@ -1,6 +1,6 @@
 <template>
   <section>
-    <h2>{{ title }}</h2>
+    <h2 style="margin-inline-start: 7px;">{{ title }}</h2>
     <ul class="video-list">
       <li v-for="video in videos" :key="video.id" class="video-item">
         <!-- 動画 -->
@@ -82,6 +82,13 @@
 </template>
 
 <script>
+import {
+  formatDuration,
+  formatPublishedAt,
+  formatViewCount,
+  getPrimaryThumbnail
+} from "../utils/formatters";
+
 export default {
   props: {
     videos: {
@@ -94,86 +101,18 @@ export default {
     },
   },
   methods: {
-    formatDuration(input) {
-      if (!input) return "";
-
-      const isoMatch = input.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-      const pad = (n) => n.toString().padStart(2, "0");
-      if (isoMatch) {
-        const [h, m, s] = isoMatch.slice(1).map((v) => parseInt(v || "0"));
-        const totalSeconds = h * 3600 + m * 60 + s;
-        const hh = Math.floor(totalSeconds / 3600);
-        const mm = Math.floor((totalSeconds % 3600) / 60);
-        const ss = totalSeconds % 60;
-        return hh ? `${hh}:${pad(mm)}:${pad(ss)}` : `${mm}:${pad(ss)}`;
-      }
-
-      const timeParts = input.split(":");
-      if (
-        timeParts.length === 2 &&
-        timeParts.every((part) => /^\d+$/.test(part))
-      ) {
-        const [mm, ss] = timeParts;
-        return `${parseInt(mm)}:${pad(parseInt(ss))}`;
-      } else if (
-        timeParts.length === 3 &&
-        timeParts.every((part) => /^\d+$/.test(part))
-      ) {
-        const [hh, mm, ss] = timeParts;
-        return `${parseInt(hh)}:${pad(parseInt(mm))}:${pad(parseInt(ss))}`;
-      }
-      return "";
-    },
-
-    formatPublishedAt(input) {
-      if (!input) return "不明";
-      const isoDate = new Date(input);
-      if (!isNaN(isoDate.getTime())) {
-        const now = new Date();
-        const diffMs = now - isoDate;
-        const minutes = Math.floor(diffMs / (1000 * 60));
-        const hours = Math.floor(minutes / 60);
-        const days = Math.floor(hours / 24);
-
-        if (minutes < 1) return "たった今";
-        if (minutes < 60) return `${minutes}分前`;
-        if (hours < 24) return `${hours}時間前`;
-        if (days === 1) return "1日前";
-        return `${days}日前`;
-      }
-      if (
-        /^\d+日前$/.test(input) ||
-        /^\d+時間前$/.test(input) ||
-        /^\d+分前$/.test(input) ||
-        input === "たった今"
-      ) {
-        return input;
-      }
-      return input;
-    },
-
-    getPrimaryThumbnail(id) {
-      return `https://i.ytimg.com/vi/${id}/sddefault.jpg`;
-    },
-
+    formatDuration,
+    formatPublishedAt,
+    formatViewCount,
+    getPrimaryThumbnail,
     onImageError(event, id) {
       if (!event.target.dataset.error) {
-        event.target.src = `https://i.ytimg.com/vi/${id}/sddefault.jpg`;
+        event.target.src = getPrimaryThumbnail(id);
         event.target.dataset.error = true;
       }
     },
-
     onChannelIconError(event) {
       event.target.style.display = "none";
-    },
-
-    formatViewCount(num) {
-      if (!num) return "0";
-      if (num < 10000) return num.toLocaleString();
-      if (num < 100000000) {
-        return (num / 10000).toFixed(1).replace(/\.0$/, "") + "万";
-      }
-      return (num / 100000000).toFixed(1).replace(/\.0$/, "") + "億";
     },
   },
 };
@@ -197,12 +136,12 @@ body {
 }
 
 .title-link{
-  color: #000000;
+  color: var(--text-primary);
 }
 
 .video-list {
   list-style: none;
-  padding: 5px;
+  padding: 10px;
   margin: 0;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -210,24 +149,25 @@ body {
 }
 
 .video-item {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   max-width: 450px;
+  border: 1px solid var(--border-color);
 }
 
 .video-item:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
 .thumbnail-wrapper {
   position: relative;
   width: 100%;
   padding-top: 56.25%; /* 16:9 */
-  background-color: #f0f0f0;
+  background-color: var(--bg-secondary);
 }
 
 .thumbnail-wrapper img {
@@ -247,10 +187,11 @@ body {
   background-color: rgba(0, 0, 0, 0.75);
   color: white;
   font-size: 0.8rem;
-  padding: 4px 8px;
+  padding: 3px 6px;
   border-radius: 3px;
   font-weight: bold;
   pointer-events: none;
+  line-height: 1.4;
 }
 
 .channel-thumbnail-wrapper {
@@ -267,7 +208,7 @@ body {
   height: 110px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
 }
 
 .info {
@@ -278,7 +219,7 @@ body {
   font-size: 1.2rem;
   margin: 0 0 0.5rem;
   line-height: 1.4;
-  color: #222;
+  color: var(--text-primary);
   display: -webkit-box;
   -webkit-line-clamp: 3;
   line-clamp: 3;
@@ -289,20 +230,20 @@ body {
 
 .info h3 a,
 .channel-info a {
-  color: #000;
+  color: var(--text-primary);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .info h3 a:hover,
 .channel-info a:hover {
-  color: #444;
+  color: var(--link-hover);
   text-decoration: underline;
 }
 
 .info p {
   font-size: 0.9rem;
-  color: #555;
+  color: var(--text-secondary);
   margin: 0.3rem 0;
   line-height: 1.4;
 }
@@ -313,7 +254,7 @@ body {
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.3rem;
-  color: #000;
+  color: var(--text-primary);
 }
 
 .channel-icon {
@@ -325,8 +266,15 @@ body {
 
 .subscriber-count {
   font-weight: bold;
-  color: #333;
+  color: var(--text-primary);
   margin-top: 0.4rem;
 }
+.channel-link .channel-info {
+  text-decoration: none;
+}
 
+.channel-link:hover .channel-info {
+  text-decoration: underline;
+  color: var(--link-hover);
+}
 </style>

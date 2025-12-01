@@ -105,7 +105,7 @@ watch(
   right: 10px;
   z-index: 20;
   background: rgba(0, 0, 0, 0.75);
-  color: white;
+  color: var(--on-accent);
   padding: 10px;
   border-radius: 10px;
   display: flex;
@@ -116,9 +116,9 @@ watch(
 }
 
 .selector {
-  background: #222;
-  color: white;
-  border: 1px solid #555;
+  background: var(--ui-dark);
+  color: var(--on-accent);
+  border: 1px solid var(--border-color);
   padding: 4px 8px;
   border-radius: 6px;
   margin-left: 6px;
@@ -128,8 +128,8 @@ watch(
   margin-top: 6px;
   padding: 6px 12px;
   font-size: 9px;
-  background: #444;
-  color: white;
+  background: var(--text-primary);
+  color: var(--on-accent);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -137,7 +137,7 @@ watch(
   width: 50%;
 }
 .reload-button:hover {
-  background: #666;
+  background: var(--text-secondary);
 }
 
 audio {

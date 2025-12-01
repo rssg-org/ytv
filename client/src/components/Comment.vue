@@ -180,6 +180,9 @@ export default {
   padding: 16px;
   border-radius: 8px;
   margin-top: -20px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .comment-list {
@@ -192,7 +195,7 @@ export default {
   display: flex;
   align-items: flex-start;
   padding: 8px 0;
-  border-bottom: 1px solid #dddddd71;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .comment-author-icon {
@@ -208,6 +211,7 @@ export default {
 .comment-author {
   font-weight: bold;
   margin-bottom: 4px;
+  color: var(--text-primary);
 }
 
 .comment-text {
@@ -215,6 +219,7 @@ export default {
   white-space: pre-wrap;
   word-break: break-word;
   position: relative;
+  color: var(--text-primary);
 }
 
 .comment-text.clamped {
@@ -231,21 +236,23 @@ export default {
 .read-more-btn {
   background: none;
   border: none;
-  color: #007bff;
+  color: var(--accent-color);
   cursor: pointer;
   font-size: 0.9em;
   margin-top: 4px;
   padding: 0;
   user-select: none;
+  transition: color 0.2s ease;
 }
 
 .read-more-btn:hover {
   text-decoration: underline;
+  color: var(--accent-dark);
 }
 
 .comment-meta {
   font-size: 0.85em;
-  color: gray;
+  color: var(--text-secondary);
   display: flex;
   gap: 8px;
   align-items: center;
@@ -262,7 +269,7 @@ export default {
 }
 
 .error-msg {
-  color: red;
+  color: var(--accent-weak);
   margin-top: 12px;
 }
 </style>

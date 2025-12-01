@@ -61,7 +61,7 @@
         style="
           padding: 10px 10px 0 10px;
           border-radius: 8px;
-          background-color: rgba(0, 0, 0, 0.05);
+          background-color: var(--video-meta-bg);
         "
       >
         <div class="video-meta">
@@ -582,13 +582,16 @@ export default {
 
 .custom-dropdown {
   position: relative;
-  background: #ffff3579;
+  background: var(--bg-secondary);
   padding: 0.5rem 1rem;
   border-radius: 6px;
   cursor: pointer;
   user-select: none;
   width: max-content;
   font-size: 0.9rem;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .custom-dropdown-label {
@@ -605,23 +608,25 @@ export default {
   top: 100%;
   left: 0;
   margin-top: 0.25rem;
-  background: white;
-  border: 1px solid #ccc;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   min-width: 100%;
   white-space: nowrap;
   max-width: max-content;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .custom-dropdown-item {
   padding: 0.5rem 1rem;
   cursor: pointer;
+  color: var(--text-primary);
 }
 
 .custom-dropdown-item:hover {
-  background-color: #eee;
+  background-color: var(--hover-bg);
 }
 
 .one-line {
@@ -675,7 +680,7 @@ p {
 .channel-name {
   font-weight: 500;
   font-size: 1.1rem;
-  color: #030303;
+  color: var(--text-primary);
   text-decoration: none;
   white-space: nowrap;
   overflow: hidden;
@@ -689,20 +694,20 @@ p {
 
 .subscriber-count {
   font-size: 0.85rem;
-  color: #606060;
+  color: var(--text-secondary);
   margin: 2px 0 0 0;
   white-space: nowrap;
 }
 .video-info p {
   font-size: 0.8rem;
-  color: #606060;
+  color: var(--text-secondary);
   margin: 0 0 4px 0;
   line-height: 1.4;
   font-weight: 400;
 }
 .video-description {
   font-size: 0.9rem;
-  color: #030303;
+  color: var(--text-primary);
   line-height: 1.5;
   margin-top: 12px;
   margin-bottom: 15px;
@@ -719,7 +724,7 @@ p {
 }
 .description-toggle {
   display: inline-block;
-  color: #065fd4; /* YouTube青リンク色 */
+  color: var(--accent-color);
   font-weight: 500;
   font-size: 0.875rem;
   cursor: pointer;
@@ -747,12 +752,12 @@ p {
   font-weight: 600;
   margin: 8px 0;
   line-height: 1.4;
-  color: #030303;
+  color: var(--text-primary);
 }
 
 .video-meta {
   font-size: 0.9rem;
-  color: #000000;
+  color: var(--text-primary);
   margin-bottom: 16px;
 }
 
@@ -799,12 +804,13 @@ p {
 
 /* バッジ（動画時間・ライブ） */
 .duration-badge {
+  line-height: 1.3;
   position: absolute;
   bottom: 4px;
   right: 4px;
   background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  padding: 2px 6px;
+  color: var(--on-accent);
+  padding: 2px 4px;
   font-size: 0.75rem;
   font-weight: 500;
   border-radius: 2px;
@@ -813,7 +819,7 @@ p {
   z-index: 10;
 }
 .badge-live {
-  background: #e62117;
+  background: var(--danger);
 }
 .video-info {
   flex: 1;
@@ -823,7 +829,7 @@ p {
   font-size: 1rem;
   font-weight: 500;
   line-height: 1.3;
-  color: #030303;
+  color: var(--text-primary);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -833,7 +839,7 @@ p {
 
 .video-metadata {
   font-size: 0.8rem;
-  color: #606060;
+  color: var(--text-secondary);
 }
 
 .dot {
@@ -848,22 +854,23 @@ p {
 
 .loading-msg {
   font-size: 1rem;
-  color: #444;
+  color: var(--text-primary);
 }
 
 .reload-btn {
   padding: 10px 24px;
-  background: #444;
-  color: #fff;
-  border: none;
+  background: var(--text-secondary);
+  color: var(--on-accent);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 1.1em;
   cursor: pointer;
   margin-top: 12px;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
 }
 .reload-btn:hover {
-  background: #666;
+  background: var(--text-secondary-hover);
+  color: var(--on-accent);
 }
 
 /* 自動再生フィルタ通知 */
@@ -871,10 +878,11 @@ p {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: #333;
-  color: #fff;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   padding: 16px 20px;
   border-radius: 8px;
+  border: 1px solid var(--border-color);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
@@ -898,12 +906,13 @@ p {
 .notification-text {
   font-size: 0.95rem;
   line-height: 1.4;
+  color: var(--text-primary);
 }
 
 .notification-close {
   background: none;
   border: none;
-  color: #fff;
+  color: var(--text-secondary);
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0;
@@ -912,7 +921,7 @@ p {
 }
 
 .notification-close:hover {
-  color: #ccc;
+  color: var(--text-primary);
 }
 
 @media (max-width: 999px) {
@@ -948,7 +957,7 @@ p {
 
   .duration-badge {
     font-size: 0.65rem;
-    padding: 1px 4px;
+    padding: 1px 2px;
   }
 }
 </style>

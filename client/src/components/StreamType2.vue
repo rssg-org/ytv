@@ -154,7 +154,6 @@ let _loopBufferListenersAttached = false;
 const BUFFER_RESUME_SECONDS = 4;
 let _onEndedAttached = false;
 
-// ended イベントハンドラ（プリフェッチ廃止: 候補IDだけ選んで emit）
 const endedHandler = {
   fn: async () => {
     try { emit('ended'); } catch (e) {}
@@ -170,7 +169,6 @@ const endedHandler = {
 
 let _onEnded = async () => { await endedHandler.fn(); };
 const PLAY_HISTORY_KEY = 'yt_play_history_v1';
-// プリフェッチ機能は廃止（候補IDのみ選ぶ）
 
 function loadPlayHistory() {
   try {
@@ -976,7 +974,7 @@ watch(videoRef, (newEl, oldEl) => {
   right: 10px;
   z-index: 20;
   background: rgba(0, 0, 0, 0.75);
-  color: white;
+  color: var(--on-accent);
   padding: 10px;
   border-radius: 10px;
   display: flex;
@@ -986,9 +984,9 @@ watch(videoRef, (newEl, oldEl) => {
   transition: opacity 0.3s ease;
 }
 .selector {
-  background: #222;
-  color: white;
-  border: 1px solid #555;
+  background: var(--ui-dark);
+  color: var(--on-accent);
+  border: 1px solid var(--border-color);
   padding: 4px 8px;
   border-radius: 6px;
   margin-left: 6px;
@@ -997,8 +995,8 @@ watch(videoRef, (newEl, oldEl) => {
   margin-top: 6px;
   padding: 6px 15px;
   font-size: 9px;
-  background: #444;
-  color: white;
+  background: var(--text-type2-reload);
+  color: var(--on-accent);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -1006,7 +1004,7 @@ watch(videoRef, (newEl, oldEl) => {
   width: 60%;
 }
 .reload-button:hover {
-  background: #666;
+  background: var(--text-secondary-hover);
 }
 audio {
   display: none;
@@ -1027,7 +1025,7 @@ audio {
   top: 10px;
   left: 10px;
   background: rgba(128,128,128,0.6);
-  color: #fff;
+  color: var(--on-accent);
   padding: 8px 10px;
   border-radius: 6px;
   z-index: 50;

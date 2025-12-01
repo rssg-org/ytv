@@ -23,7 +23,7 @@
       />
     </main>
     <footer class="footer">
-      <p>しあtube</p>
+      <p style="margin-block-start: 1px;">しあtube</p>
       <p>
         <a href="https://github.com/siawaseoktest/youtube" target="_blank" rel="noopener noreferrer">GitHub</a> |
         <a href="https://www.google.com/url?q=https%3A%2F%2Fline.me%2Fti%2Fg2%2FvCj1dWEoRZTALbC0n1w53si3-KJ8OTXnfjV6aw%3Futm_source%3Dinvitation%26utm_medium%3Dlink_copy%26utm_campaign%3Ddefault&sa=D&sntz=1&usg=AOvVaw0AaRwnxB0yifPSGZ1TbcS5" target="_blank" rel="noopener noreferrer">LINE</a>
@@ -32,7 +32,7 @@
         表示回数
         <img src="https://count.getloli.com/@:siatube?name=%3Asiatube&theme=minecraft&padding=7&offset=0&align=top&scale=1&pixelated=1&darkmode=auto" style="width: 50%; max-width: 380px;">
       </div>
-      <div style="color: #666;">バージョン1.4.3</div>
+      <div style="color: var(--text-secondary);">バージョン1.4.4</div>
     </footer>
   </div>
 </template>
@@ -96,48 +96,63 @@ export default {
 <style scoped>
 .Accesscount {
   font-size: 1rem;
+  color: var(--text-primary);
 }
 .category-nav {
   display: flex;
   gap: 1rem;
   padding: 1rem;
   justify-content: center;
+  background-color: var(--bg-primary);
+  transition: background-color 0.3s ease;
 }
 .category-nav button {
   padding: 0.5rem 1rem;
   border: none;
-  background: #eee;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   cursor: pointer;
   border-radius: 4px;
   font-weight: bold;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.category-nav button:hover {
+  background-color: var(--hover-bg);
 }
 .category-nav button.active {
-  background-color: #007bff;
-  color: white;
+  background-color: var(--accent-color);
+  color: var(--on-accent);
 }
 .error {
-  color: red;
+  color: var(--accent-weak);
   padding: 1rem;
 }
 .loading {
   padding: 1rem;
   text-align: center;
+  color: var(--text-primary);
 }
 main {
   padding: 1rem;
+  background-color: var(--bg-primary);
+  transition: background-color 0.3s ease;
 }
 .footer {
   margin-top: 2rem;
   padding: 1rem;
   text-align: center;
   font-size: 0.9rem;
-  color: #2a2a2aff;
+  color: var(--text-secondary);
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .footer a {
-  color: #0077cc;
+  color: var(--accent-color);
   text-decoration: none;
   margin: 0 0.5rem;
+  transition: color 0.2s ease;
 }
 
 .footer a:hover {
