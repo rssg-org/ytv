@@ -2,6 +2,15 @@
   <div class="header-wrapper fixed-header">
     <button
       type="button"
+      class="toggle-sidebar-button"
+      @click="toggleSidebar"
+      aria-label="サイドバーを切り替え"
+    >
+      <div style="width: 100%; height: 100%; display: block; fill: currentcolor;"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" focusable="false" aria-hidden="true" style="pointer-events: none; display: inherit; width: 100%; height: 100%;"><path d="M20 5H4a1 1 0 000 2h16a1 1 0 100-2Zm0 6H4a1 1 0 000 2h16a1 1 0 000-2Zm0 6H4a1 1 0 000 2h16a1 1 0 000-2Z"></path></svg></div>
+    </button>
+
+    <button
+      type="button"
       class="home-button"
       @click="$router.push('/')"
       aria-label="トップページへ戻る"
@@ -66,42 +75,12 @@
         </li>
       </ul>
     </form>
-
-    <!-- 設定 -->
-    <div class="header-settings">
-      <button class="settings-button" type="button" @click="settingsOpen = !settingsOpen" aria-label="設定を開く">
-        <img :src="isDarkMode ? settingIconBlack : settingIcon" alt="設定アイコン" style="width: 30px; height: 30px;" />
-      </button>
-
-      <SettingsModal
-        :model-value="settingsOpen"
-        :mode="mode"
-        :default-playback-mode="defaultPlaybackMode"
-        :short-video-filter-enabled="shortVideoFilterEnabled"
-        :short-video-filter-minutes="shortVideoFilterMinutes"
-        :display-mode="displayMode"
-        :custom-endpoints="customEndpoints"
-        :new-endpoint="newEndpoint"
-        @update:mode="mode = $event"
-        @update:default-playback-mode="defaultPlaybackMode = $event"
-        @update:short-video-filter-enabled="shortVideoFilterEnabled = $event"
-        @update:short-video-filter-minutes="shortVideoFilterMinutes = $event"
-        @update:new-endpoint="newEndpoint = $event"
-        @update:displayMode="onUpdateDisplayMode"
-        @add-endpoint="addEndpoint"
-        @remove-endpoint="removeEndpoint"
-        @close="settingsOpen = false"
-      />
-    </div>
   </div>
 </template>
 
 <script setup>
-import settingIcon from '/Image/setting-icon.txt?raw'
-import settingIconBlack from '/Image/setting-icon-black.txt?raw'
 import searchiconIcon from '/Image/search-icon.txt?raw'
 import searchIconBlack from '/Image/search-icon-black.txt?raw'
-import SettingsModal from "./SettingsModal.vue";
 
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRouter } from "vue-router";
@@ -126,7 +105,7 @@ import {
 } from "@/utils/settingsManager";
 
 const router = useRouter();
-const emit = defineEmits(["search", "searchMeta", "toggle-dark-mode"]);
+const emit = defineEmits(["search", "searchMeta", "toggle-dark-mode", "toggle-sidebar"]);
 
 // Search state
 const query = ref("");
@@ -136,7 +115,6 @@ let fetchController = null;
 const searchFormRef = ref(null);
 
 // Settings state
-const settingsOpen = ref(false);
 const customEndpoints = ref([]);
 const newEndpoint = ref("");
 const mode = ref("existing");
@@ -148,6 +126,9 @@ const isDarkMode = ref(false);
 let mq = null;
 let mqHandler = null;
 
+// Receive sidebar state from parent
+const props = defineProps({ sidebarOpen: { type: Boolean, default: true } });
+
 /**
  * 検索フォーム外クリックで候補を閉じる
  */
@@ -157,13 +138,18 @@ const onClickOutside = (event) => {
     selectedIndex.value = -1;
   }
 };
-
-/**
- * マウント時の初期化
- */
 onMounted(() => {
   document.addEventListener("click", onClickOutside);
   router.push('/');
+
+  // ウィンドウリサイズリスナー
+  const handleResize = () => {
+    viewportWidth.value = window.innerWidth;
+  };
+  window.addEventListener('resize', handleResize);
+
+  // 初期状態の設定
+  initializeSidebarState();
 
   // Load custom endpoints
   try {
@@ -198,6 +184,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   document.removeEventListener("click", onClickOutside);
+  window.removeEventListener('resize', () => {});
   // detach system color scheme listener if attached
   try {
     if (mq && mqHandler) {
@@ -283,86 +270,58 @@ const clearQuery = () => {
 };
 
 /**
- * エンドポイント追加
- */
-const addEndpoint = () => {
-  const v = newEndpoint.value.trim();
-  if (!v) return;
-  if (!isValidUrl(v)) {
-    alert("有効なURLを入力してください。");
-    return;
-  }
-  if (customEndpoints.value.includes(v)) {
-    alert("既に追加されています。");
-    newEndpoint.value = "";
-    return;
-  }
-  customEndpoints.value.push(v);
-  newEndpoint.value = "";
-  rmSaveCustomEndpoints(customEndpoints.value);
-};
-
-/**
- * エンドポイント削除
- */
-const removeEndpoint = (index) => {
-  customEndpoints.value.splice(index, 1);
-  rmSaveCustomEndpoints(customEndpoints.value);
-};
-
-/**
- * displayMode 更新ハンドラ（SettingsModal から来る）
- */
-const onUpdateDisplayMode = (value) => {
-  displayMode.value = value || 'device';
-  try {
-    saveDisplayMode(displayMode.value);
-  } catch (e) {}
-  isDarkMode.value = computeIsDarkFromMode(displayMode.value);
-  emit('toggle-dark-mode', isDarkMode.value);
-  // Manage system preference listener when using 'device' mode
-  try {
-    // detach existing
-    if (mq && mqHandler) {
-      if (mq.removeEventListener) mq.removeEventListener('change', mqHandler);
-      else if (mq.removeListener) mq.removeListener(mqHandler);
-      mq = null;
-      mqHandler = null;
-    }
-
-    if (displayMode.value === 'device' && typeof window !== 'undefined' && window.matchMedia) {
-      mq = window.matchMedia('(prefers-color-scheme: dark)');
-      mqHandler = (e) => {
-        const isDark = !!e.matches;
-        isDarkMode.value = isDark;
-        emit('toggle-dark-mode', isDark);
-      };
-      if (mq.addEventListener) mq.addEventListener('change', mqHandler);
-      else if (mq.addListener) mq.addListener(mqHandler);
-    }
-  } catch (e) {}
-};
-
-/**
  * Watchers
  */
-watch(defaultPlaybackMode, (v) => saveDefaultPlayback(v));
-watch([shortVideoFilterEnabled, shortVideoFilterMinutes], () => {
-  saveShortVideoFilter(shortVideoFilterEnabled.value, shortVideoFilterMinutes.value);
-});
 watch(mode, (v) => {
   try {
     rmSaveMode(v);
   } catch (e) {}
 });
 
+watch(defaultPlaybackMode, (v) => saveDefaultPlayback(v));
+watch([shortVideoFilterEnabled, shortVideoFilterMinutes], () => {
+  saveShortVideoFilter(shortVideoFilterEnabled.value, shortVideoFilterMinutes.value);
+});
+
 // ダークモード状態の監視
 watch(isDarkMode, (newValue) => {
   // DOM更新トリガー用
 }, { deep: true });
+
+/**
+ * サイドバー初期状態を設定
+ */
+/**
+ * サイドバーをトグル（親に状態反映を依頼）
+ */
+const toggleSidebar = () => {
+  emit("toggle-sidebar", !props.sidebarOpen);
+};
+
+// ビューポートは親が管理するようにしたためローカルでの監視は不要
 </script>
 
 <style scoped>
+.toggle-sidebar-button {
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.toggle-sidebar-button:hover {
+  background-color: var(--hover-bg);
+  border-radius: 4px;
+}
+
 .clear-button {
   position: absolute;
   right: 1.9em;
@@ -509,19 +468,5 @@ watch(isDarkMode, (newValue) => {
 .suggestions-list li.selected,
 .suggestions-list li:hover {
   background-color: var(--hover-bg);
-}
-
-.header-settings {
-  position: relative;
-  margin-left: 0.5rem;
-  flex-shrink: 0;
-}
-
-.settings-button {
-  border: none;
-  background: transparent;
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 6px;
 }
 </style>

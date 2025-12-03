@@ -4,7 +4,11 @@ import HomeView from "@/views/HomeView.vue";
 import VideoPlayer from "@/views/VideoPlayer.vue";
 import SearchView from "@/views/SearchView.vue";
 import ChannelView from "@/views/ChannelView.vue";
-import Playlist from "@/components/Playlist.vue"; 
+import Playlist from "@/components/Playlist.vue";
+import SubscriptionsView from "@/views/SubscriptionsView.vue";
+import PlaylistsView from "@/views/PlaylistsView.vue";
+import HistoryView from "@/views/HistoryView.vue";
+import SettingsView from "@/views/SettingsView.vue";
 import '@/css.css'
 
 const routes = [
@@ -38,6 +42,26 @@ const routes = [
     props: (route) => ({
       playlistId: route.query.list || "", 
     }),
+  },
+  {
+    path: "/subscriptions",
+    name: "Subscriptions",
+    component: SubscriptionsView,
+  },
+  {
+    path: "/playlists",
+    name: "Playlists",
+    component: PlaylistsView,
+  },
+  {
+    path: "/history",
+    name: "History",
+    component: HistoryView,
+  },
+  {
+    path: "/settings",
+    name: "Settings",
+    component: SettingsView,
   },
 ];
 
